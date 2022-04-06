@@ -6,7 +6,7 @@ resource "random_shuffle" "random_subnet" {
 resource "aws_instance" "example" {
   count=1
   ami = "${lookup(var.AMIS, var.AWS_REGION)}"
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
   iam_instance_profile = "LabInstanceProfile"
   key_name = "${var.KEY_NAME}"
   security_groups = ["${aws_security_group.gitlab-runner-fleet.id}"]
