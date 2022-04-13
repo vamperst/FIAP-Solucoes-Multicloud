@@ -39,6 +39,7 @@ source ~/venv/bin/activate
    ![](img/gitlab-2.png)
    6. Devolta ao terminal do cloud9 exetuce os comandos abaixo para ativar a chave na sessão de terminal que esta utilizando:
    ```shell
+    chmod 400 /home/ubuntu/.ssh/gitlab
     eval $(ssh-agent -s) 
     ssh-add -k /home/ubuntu/.ssh/gitlab
    ```
