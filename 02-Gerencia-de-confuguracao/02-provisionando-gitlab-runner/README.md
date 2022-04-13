@@ -56,7 +56,7 @@ cp -frv /home/ubuntu/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confugu
 
 cd /home/ubuntu/environment/primeiro-projeto
 
-git init --initial-branch=master
+git init
 git remote add origin git@gitlab.com:vamperst/primeiro-projeto.git
 git add .
 git commit -m "Initial commit"
