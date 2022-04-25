@@ -100,18 +100,17 @@ git push -u origin master
     4. Volte a pasta correta do exercício com o comando `cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/`
 16. De volta ao cloud9 você vai colar o token do gitlab no arquivo ansible que registra o runner. Para tal execute o comando `c9 open ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/tasks/register-runner.yml` e altere a linha 48. Não esqueça de salvar.
 17. De volta ao cloud9 você vai colar o token do gitlab no arquivo ansible que registra o runner. Para tal execute o comando `c9 open cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/tasks/register-runner.yml` e altere a linha 48. Não esqueça de salvar.
-18. De volta ao cloud9 você vai colar o token do gitlab no arquivo ansible que registra o runner. Para tal execute o comando `c9 open cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/tasks/register-runner.yml` e altere a linha 48. Não esqueça de salvar.
-19. O runner do gitlab será uma EC2 que será provisionada com terraform. Para entrar na pasta com o código execute o comando `cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/terraform-gitlab-runner/`
-20. Atualize o estado remoto do repositório para utilizar um bucket S3 disponivel na sua conta. Abra o arquivo com `c9 open state.tf`
-21. Agora que já alterou o bucket e salvou. Execute o comando `terraform init`
-22. Verifique o que será criado com o comando `terraform plan`
-23. Execute o `terraform apply --auto-approve` para subir a maquina que será o runner. lembrando que esse script executa alguns comandos na maquina criada para preprar tudo para que o ansible consiga executar no host criado.
-24. Execute o comando `terraform output ec2_dns` para copiar o ip publico da instancia para a área de transferência.
+18. O runner do gitlab será uma EC2 que será provisionada com terraform. Para entrar na pasta com o código execute o comando `cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/terraform-gitlab-runner/`
+19. Atualize o estado remoto do repositório para utilizar um bucket S3 disponivel na sua conta. Abra o arquivo com `c9 open state.tf`
+20. Agora que já alterou o bucket e salvou. Execute o comando `terraform init`
+21. Verifique o que será criado com o comando `terraform plan`
+22. Execute o `terraform apply --auto-approve` para subir a maquina que será o runner. lembrando que esse script executa alguns comandos na maquina criada para preprar tudo para que o ansible consiga executar no host criado.
+23. Execute o comando `terraform output ec2_dns` para copiar o ip publico da instancia para a área de transferência.
     ![](img/gitlab-11.png)
-25. Agora entre na pasta onde vai executar o ansible. Para isso utilize o comando `cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/`
-26. Utilize o comando `c9 open hosts` para abrir o arquivo onde é configurado quais maquinas e como serão acessadas pelo ansible. Altere adicionando o IP publico da instancia criada no local indicado.
+24. Agora entre na pasta onde vai executar o ansible. Para isso utilize o comando `cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/`
+25. Utilize o comando `c9 open hosts` para abrir o arquivo onde é configurado quais maquinas e como serão acessadas pelo ansible. Altere adicionando o IP publico da instancia criada no local indicado.
     ![](img/gitlab-12.png)
-27. Execute o comando abaixo para executar o ansible que vai configurar o EC2 como gitlab runner:
+26. Execute o comando abaixo para executar o ansible que vai configurar o EC2 como gitlab runner:
 ``` shell
 ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u 'ubuntu' -i hosts  --extra-vars 'gitlab_runner_name=gitlab-runner-fleet-001' play.yaml    
 ```
