@@ -1,6 +1,6 @@
 1. Execute o comando `cd ~/environment/FIAP-Solucoes-Multicloud/` para entrar na pasta principal do repositório e então execute o comando `git reset --hard && git pull origin master` para garantir que esta com a versão mais atualizada do exercicio.'.
 2. Para entrar na pasta do exercicio execute o comando `cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/`.
-3. Primeiramente é necessário instalar o ansible além de atualizar o python e utilizar virtual env. Para tal vamos utilizar a sequência de comandos abaixo.
+3. Primeiramente é necessário instalar o ansible além de atualizar o python e utilizar virtual env. Para tal vamos utilizar a sequência de comandos abaixo. EXECUTE LINHA A LINHA, NÃO COPIE TUDO DE UMA VEZ.
 ```bash
 
 #Atualizando o python para 3.8
@@ -47,7 +47,8 @@ source ~/venv/bin/activate
 7. De o nome de `primeiro-projeto` ao projeto. Marque como `Public` e desmarque a opção de inicializar com README. 
    ![](img/gitlab-3.png)
 8. Clique em `Create project`
-9. De volta ao Cloud9 você vai subir o código desse primeiro projeto no gitlab. Para isso siga os comandos abaixo tomando o cuidado com os pontos onde precisa colocar suas informações
+9. De volta ao Cloud9 você vai subir o código desse primeiro projeto no gitlab. Para isso siga os comandos abaixo tomando o cuidado com os pontos onde precisa colocar suas informações. Altere a URL que efetua o add remote remove o SEU-USUARIO e colocando o seu usuario do gitlab.
+
 ```bash
 git config --global user.name "SEU NOME"
 git config --global user.email "SEU EMAIL DO GITLAB"
@@ -58,7 +59,7 @@ cp -frv /home/ubuntu/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confugu
 cd /home/ubuntu/environment/primeiro-projeto
 
 git init
-git remote add origin git@gitlab.com:vamperst/primeiro-projeto.git
+git remote add origin git@gitlab.com:SEU-USUARIO/primeiro-projeto.git
 git add .
 git commit -m "Initial commit"
 git push -u origin master
@@ -74,24 +75,47 @@ git push -u origin master
     ![](img/gitlab-8.png)
 13. Copie o token e mantenha na área de transferência.
     ![](img/gitlab-9.png)
-14. De volta ao cloud9 você vai colar o token do gitlab no arquivo ansible que registra o runner. Para tal execute o comando `c9 open cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/tasks/register-runner.yml` e altere a linha 48. Não esqueça de salvar.
-15. Para criar as VPCs necessárias para o proximo passo sera necessario seguir os passos a seguir:
+14. Antes de continuar, é necessário confirmar se existem as redes que serão utilizadas para subir o runner em sua conta. Execute o comando `aws ec2 describe-vpcs | jq '.Vpcs | length'`. Se o retorno for `2` ou mais, pule para o passo 16.
+15. Para criar a rede siga os passos abaixo:
+    1.  Execute os comandos abaixo para fazer clone do repositório e entrar na pasta correta:
+    ``` bash
+    cd ~/environment
+    git clone https://github.com/vamperst/Hybrid-e-native-cloud-tutorials.git
+    cd ~/environment/Hybrid-e-native-cloud-tutorials/01-Terraform/demos/02-Modules/
+    ``` 
+    2. Crie a rede com os comandos abaixo:
+    ``` bash
+    cd ~/environment/Hybrid-e-native-cloud-tutorials/01-Terraform/demos/02-Modules/vpc-call/
+    terraform init
+    terraform apply --auto-approve
+    ```
+    ![](img/terr-1.png)
+    3. Crie as rotas para que a rede funcione com os comandos:
+    ```bash
+    cd ~/environment/Hybrid-e-native-cloud-tutorials/01-Terraform/demos/02-Modules/RT-call/
+    terraform init
+    terraform apply --auto-approve
+    ```
+    ![](img/terr-2.png)
+    4. Volte a pasta correta do exercício com o comando `cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/`
+16. De volta ao cloud9 você vai colar o token do gitlab no arquivo ansible que registra o runner. Para tal execute o comando `c9 open ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/tasks/register-runner.yml` e altere a linha 48. Não esqueça de salvar.
+17. Para criar as VPCs necessárias para o proximo passo sera necessario seguir os passos a seguir:
    1. Execute o comando `cd ~/environment`
    2. Execute o comando `git clone https://github.com/vamperst/Hybrid-e-native-cloud-tutorials.git`
    3. Siga o tutorial [https://github.com/vamperst/Hybrid-e-native-cloud-tutorials/tree/master/01-Terraform/demos/02-Modules](https://github.com/vamperst/Hybrid-e-native-cloud-tutorials/tree/master/01-Terraform/demos/02-Modules)
-17. De volta ao cloud9 você vai colar o token do gitlab no arquivo ansible que registra o runner. Para tal execute o comando `c9 open cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/tasks/register-runner.yml` e altere a linha 48. Não esqueça de salvar.
 18. De volta ao cloud9 você vai colar o token do gitlab no arquivo ansible que registra o runner. Para tal execute o comando `c9 open cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/tasks/register-runner.yml` e altere a linha 48. Não esqueça de salvar.
-19. O runner do gitlab será uma EC2 que será provisionada com terraform. Para entrar na pasta com o código execute o comando `cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/terraform-gitlab-runner/`
-20. Atualize o estado remoto do repositório para utilizar um bucket S3 disponivel na sua conta. Abra o arquivo com `c9 open state.tf`
-21. Agora que já alterou o bucket e salvou. Execute o comando `terraform init`
-22. Verifique o que será criado com o comando `terraform plan`
-23. Execute o `terraform apply --auto-approve` para subir a maquina que será o runner. lembrando que esse script executa alguns comandos na maquina criada para preprar tudo para que o ansible consiga executar no host criado.
-24. Execute o comando `terraform output ec2_dns` para copiar o ip publico da instancia para a área de transferência.
+19. De volta ao cloud9 você vai colar o token do gitlab no arquivo ansible que registra o runner. Para tal execute o comando `c9 open cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/tasks/register-runner.yml` e altere a linha 48. Não esqueça de salvar.
+20. O runner do gitlab será uma EC2 que será provisionada com terraform. Para entrar na pasta com o código execute o comando `cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/terraform-gitlab-runner/`
+21. Atualize o estado remoto do repositório para utilizar um bucket S3 disponivel na sua conta. Abra o arquivo com `c9 open state.tf`
+22. Agora que já alterou o bucket e salvou. Execute o comando `terraform init`
+23. Verifique o que será criado com o comando `terraform plan`
+24. Execute o `terraform apply --auto-approve` para subir a maquina que será o runner. lembrando que esse script executa alguns comandos na maquina criada para preprar tudo para que o ansible consiga executar no host criado.
+25. Execute o comando `terraform output ec2_dns` para copiar o ip publico da instancia para a área de transferência.
     ![](img/gitlab-11.png)
-21. Agora entre na pasta onde vai executar o ansible. Para isso utilize o comando `cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/`
-22. Utilize o comando `c9 open hosts` para abrir o arquivo onde é configurado quais maquinas e como serão acessadas pelo ansible. Altere adicionando o IP publico da instancia criada no local indicado.
+26. Agora entre na pasta onde vai executar o ansible. Para isso utilize o comando `cd ~/environment/FIAP-Solucoes-Multicloud/02-Gerencia-de-confuguracao/02-provisionando-gitlab-runner/ansible-gitlab-runner/`
+27. Utilize o comando `c9 open hosts` para abrir o arquivo onde é configurado quais maquinas e como serão acessadas pelo ansible. Altere adicionando o IP publico da instancia criada no local indicado.
     ![](img/gitlab-12.png)
-23. Execute o comando abaixo para executar o ansible que vai configurar o EC2 como gitlab runner:
+28. Execute o comando abaixo para executar o ansible que vai configurar o EC2 como gitlab runner:
 ``` shell
 ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u 'ubuntu' -i hosts  --extra-vars 'gitlab_runner_name=gitlab-runner-fleet-001' play.yaml    
 ```
