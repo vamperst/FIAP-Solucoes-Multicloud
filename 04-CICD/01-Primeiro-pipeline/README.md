@@ -30,7 +30,7 @@ apply:
 4. Modifique o nome do bucket no state.tf para o que esta utilizando para guardar o estado nas demos anteriores. Para abrir o arquivo utilize o comando `c9 open state.tf`
 5. Atualize o repositório do gitlab com os seguintes comandos:
 ```shell
-git add .gitlab-ci.yml
+git add .gitlab-ci.yml state.tf
 git commit -m "primeiro pipeline"
 eval $(ssh-agent -s)    
 ssh-add -k /home/ubuntu/.ssh/gitlab
